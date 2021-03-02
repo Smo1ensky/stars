@@ -1,65 +1,36 @@
-import React, { useEffect, useRef, useReducer } from "react";
+import React from "react";
 import {StopWatchContainer} from './style'
 
-export default function StopWatch() {
-    const { second, start, pause, stop } = useStopwatch();
-    return (
-        <StopWatchContainer>
-            <h3>Stopwatch</h3>
-            <h1>{second}</h1>
-            <button onClick={start}>Start</button>
-            <button onClick={pause}>Pause</button>
-            <button onClick={stop}>Stop</button>
-        </StopWatchContainer>
-    );
+interface IStopWatch {
+    timerOn:boolean,
+    setTimerOn:Function,
+    time:number,
+    setTime:Function
 }
 
-const useStopwatch = () => {
-    const [state, dispatch] = useReducer(
-        (state, action) => {
-            switch (action.type) {
-                case "START":
-                    return { ...state, started: true };
-                case "PAUSE":
-                    return { ...state, started: false };
-                case "STOP":
-                    return { ...state, started: false, second: 0 };
-                case "STEP":
-                    return {
-                        ...state,
-                        second: state.second + 1
-                    };
-                default:
-                    return state;
-            }
-        },
-        {
-            second: 0,
-            started: false
+const stopWatch = ({timerOn,setTimerOn,time,setTime}:IStopWatch)=> {
+
+    React.useEffect(() => {
+        let interval:any = null;
+
+        if (timerOn) {
+            interval = setInterval(() => {
+                setTime((prevTime:number) => prevTime + 10);
+            }, 10);
+        } else if (!timerOn) {
+            clearInterval(interval);
         }
-    );
 
-    const intervalRef = useRef();
+        return () => clearInterval(interval);
+    }, [timerOn]);
+return(
+    <StopWatchContainer>
+        <h3>Time</h3>
+            <span>{("0" + Math.floor((time / 60000) % 60)).slice(-2)}:</span>
+            <span>{("0" + Math.floor((time / 1000) % 60)).slice(-2)}:</span>
+            <span>{("0" + ((time / 10) % 100)).slice(-2)}</span>
+    </StopWatchContainer>
+)
+}
 
-    const { second, started } = state;
-
-    useEffect(
-        () => {
-            if (started) {
-                const id = setInterval(() => {
-                    dispatch({ type: "STEP" });
-                }, 1000);
-                intervalRef.current = id;
-            }
-            return () => clearInterval(intervalRef.current);
-        },
-        [started]
-    );
-    return {
-        second,
-        start: () => dispatch({ type: "START" }),
-        pause: () => dispatch({ type: "PAUSE" }),
-        stop: () => dispatch({ type: "STOP" })
-    };
-};
-
+export default stopWatch

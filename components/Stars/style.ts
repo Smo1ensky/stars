@@ -1,6 +1,8 @@
 import styled from "@emotion/styled";
 import {keyframes} from "@emotion/react";
 
+
+
 const fall = keyframes`
   0% {
     
@@ -30,16 +32,17 @@ export const StarsContainer = styled.div`
   align-items: center;
   background: url("/image/star.png") center no-repeat;
   background-size: cover;
-  width: 70px;
-  height: 70px;
+  width: 100px;
+  height: 100px;
   margin-right: 50px;
   margin-left: 50px;
-  font-size: 25px;
+  font-size: 50px;
   opacity: 0;
   font-weight: bold;
-  animation: ${fall} 5s linear infinite;
-
-
-
+  animation: ${fall} 3s linear infinite;
 `
 
+export const PositionContainer = styled.div<{xPosition: number}>`
+display: flow-root;
+  transform: translateX(${({xPosition})=>xPosition+10}px);
+`
